@@ -1,7 +1,5 @@
 import productSchema from "../models/productModel.js";
-import {
-  addLog
-} from "./logController.js";
+
 import {
   getAll,
   getOne,
@@ -11,89 +9,70 @@ import {
 
 const getSku = async (req, res) => {
   try {
-    const {
-      sku
-    } = req.body;
+    
+    const { sku } = req.body;
+    if (!sku) {      
+      return res.status(404).json({ msg: "Must submit a sku!" });
+    }
+    const query = await productSchema.findOne({ sku });
+    res.status(200).json({ res: query });
 
-    const query = await productSchema.findOne({
-      sku
-    });
-    res.status(200).json({
-      res: query
-    });
   } catch (e) {
-    return res.status(404).json({
-      msg: "Fatal error with that ID!"
-    });
+    return res.status(404).json({ msg: "Fatal error with that SKU!" });
   }
 };
+
 const getStock = async (req, res) => {
-  try { 
-    const query = await productSchema.find({
-      stock: 0
-    });
-    res.status(200).json({
-      res: query
-    });
+  try {
+
+    const query = await productSchema.find({  stock: 0 });
+    res.status(200).json({ res: query });
+
   } catch (e) {
-    return res.status(404).json({
-      msg: "Fatal error with that ID!"
-    });
+    return res.status(404).json({ msg: "Fatal error!" });
   }
 };
+
 const addProduct = async (req, res) => {
-  const {
-    sku
-  } = req.body;
+  const { sku } = req.body;
 
-  const issetSku = await productSchema.findOne({
-    sku
-  });
-
-  if (issetSku) {
-    addLog(req, "Product", "Create", "Product is register!");
-    return res.status(400).json({
-      msg: `This sku is already registered!`
-    });
+  const issetSku = await productSchema.findOne({ sku });
+  if (!sku) {
+    return res.status(400).json({ msg: `This sku is already registered!` });
+  }
+  if (issetSku) {   
+    return res.status(400).json({ msg: `This sku is already registered!` });
   }
 
   try {
-    const product = new productSchema(req.body);
 
+    const product = new productSchema(req.body);
     await product.save();
 
-    addLog(req, "Product", "Create", "A new product create!");
     res.json({
       res: product,
       msg: "A new product create!"
     });
+    
   } catch (err) {
-    addLog(req, "Product", "Create", "Invalid token!");
-    console.log(err);
+     res.json({ msg: "Invalid token!"});
   }
 };
 const updateProduct = async (req, res) => {
-  const {
-    _id,
-    sku
-  } = req.params;
+
+  const { _id  } = req.params;
+  const { sku  } = req.body;
 
   try {
+
     const issetId = await productSchema.findById(_id);
     if (!issetId) {
-      addLog(req, "Products", "Update", "In getting product!");
-      return res.status(404).json({
-        msg: "Error getting user!"
-      });
+      return res.status(404).json({ msg: "No product found with that ID!" });
     }
-    const issetSku = await productSchema.findOne({
-      sku
-    });
-    if (issetSku && issetSku != _id) {
-      addLog(req, "Products", "Update", "In getting product!");
-      return res.status(404).json({
-        msg: "Error getting user!"
-      });
+
+    const issetSku = await productSchema.findOne({ sku });
+    if (issetSku && issetSku.id != _id) {
+      return res.status(404).json({  msg: "This sku is associated with another product!" });
     }
 
     issetId.name = req.body.name || issetId.name;
@@ -104,21 +83,17 @@ const updateProduct = async (req, res) => {
     issetId.description = req.body.description;
     issetId.info = req.body.info || issetId.info;
     issetId.val = req.body.val || issetId.val;
-    issetId.sku = req.body.sku || issetId.sku;
+    issetId.sku = sku || issetId.sku;
     issetId.img = req.body.img || issetId.img;
 
     const userStored = await issetId.save();
     res.json({
       res: userStored,
-      msg:"Updated product!!"
+      msg: "Updated product!!"
     });
-
 
   } catch (err) {
-    addLog(req, "Product", "Update One", "Invalid token!");
-    return res.status(404).json({
-      msg: "Fatal error!"
-    });
+    return res.status(404).json({ msg: "Fatal error!" });
   }
 }
 
@@ -129,7 +104,6 @@ const deleteProduct = deleteOne(productSchema, "Users");
 
 
 export {
-
   addProduct,
   getProduct,
   getProducts,

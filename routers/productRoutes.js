@@ -2,14 +2,14 @@ import express from "express";
 import Auth from "../middleware/Auth.js";
 
 import {
-   addProduct,
-   getProduct,
-   getProducts,
-   deleteProduct,
-   updateProduct,
-   getSku,
-   countProducts,
-   getStock
+    addProduct,
+    getProduct,
+    getProducts,
+    deleteProduct,
+    updateProduct,
+    getSku,
+    countProducts,
+    getStock
 } from "../controllers/productController.js";
 
 const router = express.Router();
