@@ -103,14 +103,14 @@ describe("POST /PRODUCTS/COUNT", () => {
 });
 describe("GET /PRODUCT/GET", () => {
     test('Shuold response with a 200 status code ', async () => {
-        const response = await request(app).get("/API/PRODUCT/modify-product/64825519ddcfe48c5a4419a4").send().set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(app).get("/API/PRODUCT/64825519ddcfe48c5a4419a4").send().set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("res");
         expect(response.body).toBeInstanceOf(Object);
     });
      test('Shuold response with a 200 status code ', async () => {
-         const response = await request(app).get("/API/PRODUCT/modify-product/64825519ddcfe48c5a4419a5").send().set('Authorization', `Bearer ${accessToken}`);
+         const response = await request(app).get("/API/PRODUCT/64825519ddcfe48c5a4419a5").send().set('Authorization', `Bearer ${accessToken}`);
          expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('msg', 'No document found with that ID!');
      });
@@ -129,32 +129,32 @@ describe("GET /PRODUCT/UPDATE", () => {
         "img": "http://sdsadd .dsdadd"
     }
     test('Shuold response with a 200 status code ', async () => {
-        const response = await request(app).put("/API/PRODUCT/modify-product/648255ff7207d46e00526f14").send(updateProduct).set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(app).put("/API/PRODUCT/648255ff7207d46e00526f14").send(updateProduct).set('Authorization', `Bearer ${accessToken}`);
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("res");
     });
     test('Shuold response with a 200 status code ', async () => {
-        const response = await request(app).put("/API/PRODUCT/modify-product/64825519ddcfe48c5a4419a5").send(updateProduct).set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(app).put("/API/PRODUCT/64825519ddcfe48c5a4419a5").send(updateProduct).set('Authorization', `Bearer ${accessToken}`);
         expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('msg', 'No product found with that ID!');
     });
     test('Shuold response with a 200 status code ', async () => {
         updateProduct.sku = '250555s';
-        const response = await request(app).put("/API/PRODUCT/modify-product/648255ff7207d46e00526f14").send(updateProduct).set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(app).put("/API/PRODUCT/648255ff7207d46e00526f14").send(updateProduct).set('Authorization', `Bearer ${accessToken}`);
         expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('msg', 'This sku is associated with another product!');
     });
 });
 describe("GET /PRODUCT/DELETE", () => {
     test('Shuold response with a 200 status code ', async () => {
-        const response = await request(app).delete("/API/PRODUCT/modify-product/6484ab03320a5a1bbe776bd3").send().set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(app).delete("/API/PRODUCT/6484ab03320a5a1bbe776bd3").send().set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("res");
         expect(response.body).toBeInstanceOf(Object);
     });
     test('Shuold response with a 200 status code ', async () => {
-        const response = await request(app).delete("/API/PRODUCT/modify-product/64825519ddcfe48c5a4419a5").send().set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(app).delete("/API/PRODUCT/64825519ddcfe48c5a4419a5").send().set('Authorization', `Bearer ${accessToken}`);
         expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('msg', 'No document found with that ID!');
     });

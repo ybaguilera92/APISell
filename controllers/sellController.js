@@ -22,9 +22,18 @@ const addSells = async (req, res) => {
   try {
     for (const sellItem of sellItems) {
 
-      const { product } = sellItem;
+      const { product,count } = sellItem;
       const productItem = await productSchema.findOne({ _id: product });
 
+      if (!productItem) {
+        return res.status(404).json({  msg: `This product is not registered!` });
+      }
+      if (count > 1) {
+        return res.status(404).json({  msg: `You cannot buy more than one ${productItem.name}!` });
+      }      
+      if (productItem.stock == 0) {
+        return res.status(404).json({  msg: `This ${productItem.name} not have stock!` });
+      }
       if (categorys.includes(productItem.category)) {
         return res.status(404).json({ msg: `This category exist in more than product!` });
       } else { 
@@ -33,40 +42,26 @@ const addSells = async (req, res) => {
     }
     for (const sellItem of sellItems) {
 
-      const { product, count } = sellItem;
+      const { product } = sellItem;
 
-      const issetProduct = await productSchema.findOne({ _id: product });
+      const productItem = await productSchema.findOne({ _id: product });   
+      productItem.stock = productItem.stock - 1;
+      await productItem.save();
 
-      if (count > 1) {
-        return res.status(404).json({  msg: `You cannot buy more than one product!` });
-      }
-      if (!issetProduct) {
-        return res.status(404).json({  msg: `This product is not registered!` });
-      }
-      if (issetProduct.stock == 0) {
-        return res.status(404).json({  msg: `This product not have stock!` });
-      }
+      const sellOne = await sellSchema.findOne({ product });
 
-      issetProduct.stock = issetProduct.stock - 1;
-      await issetProduct.save();
-
-      const issetSell = await sellSchema.findOne({ product });
-
-      if (issetSell) {
-        issetSell.gain = issetSell.gain + issetProduct.price;
-        issetSell.count = issetSell.count + 1;
-        await issetSell.save();
-        //console.log(`Sell for product ${product} is already registered.`);
+      if (sellOne) {
+        sellOne.gain = sellOne.gain + productItem.price;
+        sellOne.count = sellOne.count + 1;
+        await sellOne.save();
       } else {
         const sell = await sellSchema.create({
           product: product,
-          count: count,
-          gain: issetProduct.price
+          count: 1,
+          gain: productItem.price
         });
-        //console.log(`New sell for product ${product} created.`);
       }
     }
-
     return res.status(200).json({
       msg: `Sells registered successfully!`
     });
@@ -81,8 +76,8 @@ const getSells =  async (req, res) => {
 
     const query = await sellSchema.find().populate({
       path: 'product',
-      select: '-createdAt -updatedAt -__v'
-    }).select('-createdAt -updatedAt -__v');
+      select: '-createdAt -updatedAt -__v -deletedAt'
+    }).select('-createdAt -updatedAt -__v -deletedAt');
     res.status(200).json({ res: query });
     
   } catch (e) {

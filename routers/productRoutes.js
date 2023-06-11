@@ -21,7 +21,7 @@ router.get("/getStock", getStock);
 router.post("/countProducts", countProducts);
 
 router
-    .route("/modify-product/:_id")
+    .route("/:_id")
     .get(Auth, getProduct)
     .put(Auth, updateProduct)
     .delete(Auth, deleteProduct);

@@ -5,7 +5,8 @@ const sellSchema = mongoose.Schema({
   
   product: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Product'
+    ref: 'Product',
+    unique: true
   },
   count: {
     type: Number,
@@ -14,8 +15,12 @@ const sellSchema = mongoose.Schema({
   gain: {
     type: Number,
     default: 0
+  },
+  deletedAt: {
+    type: Boolean,
+    default: false
   }
-
+  
 }, {
   timestamps: true
 });

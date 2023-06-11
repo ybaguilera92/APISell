@@ -5,7 +5,6 @@ import { getAll, getOne, deleteOne} from "./handlerFactory.js";
 
 
 const signIn = async (req, res) => {
-  console.log(req.body);
   const { username, password } = req.body;
 
   const user = await userSchema.findOne({ username });
@@ -30,15 +29,7 @@ const signIn = async (req, res) => {
        token: JWT(user._id),
      }
     });
-  } else {
-    user.count = user.count + 1;
-    await user.save();
-    if (user.count == 2) { 
-      user.enabled = false;
-      user.count = 0;
-      await user.save();
-       return res.status(400).json({ msg: "User disable!" });
-    }
+  } else {  
     return res.status(400).json({ msg: "Password incorrect!" });
   }
 };

@@ -56,3 +56,34 @@ describe("POST /SELL", () => {
     });
 });
 
+describe("POST /SELL", () => {
+    const newSEll = [{
+            "product": "6485d09c067279481b9d5643",
+            "count": 1
+        },
+        {
+            "product": "6485d0a7067279481b9d5647",
+            "count": 1
+        }]
+    test('should create a new sells', async () => {
+        const response = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('msg', 'Sells registered successfully!');
+    });
+
+    test('should return an error if not product exists', async () => {
+        newSEll[0].product = "6483473a8bceec4262e86b10"
+        const res = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
+        expect(res.statusCode).toBe(404);
+    });
+    test('should return an error if count greater than 1', async () => {
+        newSEll[1].count = 2
+        const res = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
+        expect(res.statusCode).toBe(404);
+    });
+    test('should return an error if sotck to equal at 0', async () => {
+        const res = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
+        expect(res.statusCode).toBe(404);
+    });
+});
+

@@ -52,6 +52,11 @@ const producSchema = mongoose.Schema({
     require: true,
     trim: true,
   },
+  deletedAt: {
+    type: Boolean,
+    default: false
+  }
+  
 }, {
   timestamps: true
 });

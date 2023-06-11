@@ -17,7 +17,7 @@ router.post("/addUser", Auth, addUser);
 router.get("/getUsers", Auth, getUsers);
 
 router
-    .route("/modify-user/:_id")
+    .route("/:_id")
     .get(Auth, getUser)
     .put(Auth, updateUser)
     .delete(Auth, deleteUser);

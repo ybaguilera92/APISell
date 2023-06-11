@@ -4,11 +4,11 @@ import APIFeatures from "../utils/apiFeaturesUtil.js";
 const deleteOne = (Model, Module) =>
   catchAsync(async (req, res, next) => {
     try {
-      const doc = await Model.findByIdAndDelete(req.params._id);
+      const doc = await Model.findByIdAndUpdate(req.params._id, {deletedAt:true} ).select('-createdAt -updatedAt -__v');
       if (!doc) {
         return res.status(404).json({ msg: "No document found with that ID!" });
       }
-
+      doc.deletedAt=true;
       res.json({
         res: doc,
         msg: "Rgisted was delete successfull!"
@@ -79,12 +79,13 @@ const getOne = (Model, popOptions) =>
 const getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     try {
-      let filter = { deleteAt: false };
+      let filter = { deletedAt: false };
       const features = new APIFeatures(Model.find(filter), req.body)
         .filter()
         .sort()
         .limitFields()
-        .paginate();
+        .paginate()
+        
       
       const doc = await features.query;
       const { page } = req.body
@@ -95,6 +96,8 @@ const getAll = (Model) =>
       });
 
     } catch (e) {
+      console.log('hola');
+      console.log(e.message);
       return res.status(404).json({ msg: "Fatal error!" });
     }
   });
@@ -102,7 +105,7 @@ const countAll = (Model) =>
   catchAsync(async (req, res, next) => {
     try {
 
-      let filter = { deleteAt: false };
+      let filter = { deletedAt: false };
       const features = new APIFeatures(Model.find(filter), req.body)
         .filter()
         .sort()

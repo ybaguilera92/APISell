@@ -7,14 +7,6 @@ const userSchema = mongoose.Schema({
     require: true,
     trim: true,
   },
-    // unidad: {
-    //   type: Schema.ObjectId,
-    //   ref: 'unidad'
-    // },
-    // createdAt: {
-    //   type: Date,
-    //   default: Date.now
-    // },
   lastName: {
     type: String,
     require: true,
@@ -53,10 +45,10 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     default: true
   },
-  deleteAt: {
+  deletedAt: {
     type: Boolean,
     default: false
-  },
+  }
 }, {
   timestamps: true
 });
