@@ -2,16 +2,22 @@ import mongoose from "mongoose";
 
 
 const sellSchema = mongoose.Schema({
-  
-  product: {
+  user: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Product',
-    unique: true
+    ref: 'User',
+    unique:false
   },
-  count: {
-    type: Number,
-    default: 0
-  },
+  products: [{
+    product: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Product',
+    },
+    //_id:{type: String},
+    count: {
+      type: Number,
+      default: 0
+    }
+  }],
   gain: {
     type: Number,
     default: 0
@@ -20,7 +26,7 @@ const sellSchema = mongoose.Schema({
     type: Boolean,
     default: false
   }
-  
+
 }, {
   timestamps: true
 });

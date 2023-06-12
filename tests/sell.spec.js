@@ -27,57 +27,41 @@ describe("GET /SELL/gainTotal", () => {
 });
 describe("POST /SELL", () => {
     const newSEll = {
-        "product": "6483473a8bceec4262e86b6b",
-        "count": 1
+        "user": "64875bd043ae1f07af510b06",
+        "products": [{
+                "product": "6485d0a7067279481b9d5647",
+                "count": 1
+            },
+            {
+                "product": "6485d20baff760137163e7f9",
+                "count": 1
+            }
+        ]
     }
     test('should create a new sell', async () => {
-        const response = await request(app).post('/API/SELL/').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toHaveProperty('res');
-        expect(response.body).toHaveProperty('msg', 'This sell is already registered!');
-    });
-
-    test('should return an error if not product exists', async () => {
-        newSEll.product = "6483473a8bceec4262e86b10"
-        const res = await request(app).post('/API/SELL/').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
-        expect(res.statusCode).toBe(404);
-        expect(res.body).toHaveProperty('msg', 'This product is not registered!');
-    });
-    test('should return an error if count greater than 1', async () => {
-        newSEll.count = 2
-        const res = await request(app).post('/API/SELL/').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
-        expect(res.statusCode).toBe(404);
-        expect(res.body).toHaveProperty('msg', 'You cannot buy more than one product!');
-    });
-    test('should return an error if sotck to equal at 0', async () => {
-        const res = await request(app).post('/API/SELL/').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
-        expect(res.statusCode).toBe(404);
-        expect(res.body).toHaveProperty('msg', 'This product not have stock!');
-    });
-});
-
-describe("POST /SELL", () => {
-    const newSEll = [{
-            "product": "6485d09c067279481b9d5643",
-            "count": 1
-        },
-        {
-            "product": "6485d0a7067279481b9d5647",
-            "count": 1
-        }]
-    test('should create a new sells', async () => {
         const response = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
+        console.log(response.error.message);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('msg', 'Sells registered successfully!');
     });
 
-    test('should return an error if not product exists', async () => {
-        newSEll[0].product = "6483473a8bceec4262e86b10"
+    test('should return an error if not user exists', async () => {
+        newSEll.user = "64875bd043ae1f07af510b01"
         const res = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
         expect(res.statusCode).toBe(404);
+        expect(res.body).toHaveProperty('msg', 'This user is not registered!');
+    });
+
+    test('should return an error if not product exists', async () => {
+        newSEll.user = "64875bd043ae1f07af510b06"
+        newSEll.products[0].product = "6483473a8bceec4262e86b10"
+        const res = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
+        expect(res.statusCode).toBe(404);
+        expect(res.body).toHaveProperty('msg', 'This product is not registered!');
     });
     test('should return an error if count greater than 1', async () => {
-        newSEll[1].count = 2
+        newSEll.products[0].product = "6485d0a7067279481b9d5647"
+        newSEll.products[0].count = 2
         const res = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
         expect(res.statusCode).toBe(404);
     });
@@ -86,4 +70,5 @@ describe("POST /SELL", () => {
         expect(res.statusCode).toBe(404);
     });
 });
+
 

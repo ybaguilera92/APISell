@@ -1,17 +1,20 @@
 import catchAsync from "../utils/catchAsyncUtil.js";
 import APIFeatures from "../utils/apiFeaturesUtil.js";
 
-const deleteOne = (Model, Module) =>
+const deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
     try {
-      const doc = await Model.findByIdAndUpdate(req.params._id, {deletedAt:true} ).select('-createdAt -updatedAt -__v');
-      if (!doc) {
-        return res.status(404).json({ msg: "No document found with that ID!" });
-      }
-      doc.deletedAt=true;
+
+      const  id  = req.params._id;
+      const doc = await Model.findOne({ _id: id, deletedAt: false }).select('-createdAt -updatedAt -__v');
+      
+      if (!doc) return res.status(404).json({ msg: "No document found with that ID!" });
+
+      doc.deletedAt = true;
+      doc.save();
       res.json({
         res: doc,
-        msg: "Rgisted was delete successfull!"
+        msg: "Register was delete successfull!"
       });
 
     } catch (e) {
@@ -19,7 +22,7 @@ const deleteOne = (Model, Module) =>
     }
   });
 
-const updateOne = (Model, Module) =>
+const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     try {
       const doc = await Model.findByIdAndUpdate(req.params._id, req.body, {
@@ -27,9 +30,8 @@ const updateOne = (Model, Module) =>
         runValidators: true,
       });
 
-      if (!doc) {
-        return res.status(404).json({ msg: "No document found with that ID!" });
-      }
+      if (!doc) return res.status(404).json({ msg: "No document found with that ID!" });
+      
       res.status(200).json({
         res: doc,
         msg: "Register was update successfull!"
@@ -40,7 +42,7 @@ const updateOne = (Model, Module) =>
     }
   });
 
-const createOne = (Model, Module) =>
+const createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     try {
 
@@ -66,9 +68,8 @@ const getOne = (Model, popOptions) =>
       if (popOptions) query = query.populate(popOptions);
       const doc = await query;
 
-      if (!doc) {
-        return res.status(404).json({ msg: "No document found with that ID!" });      
-      }
+      if (!doc) return res.status(404).json({ msg: "No document found with that ID!" });      
+      
       res.status(200).json({ res: doc });
 
     } catch (e) {
@@ -96,7 +97,6 @@ const getAll = (Model) =>
       });
 
     } catch (e) {
-      console.log('hola');
       console.log(e.message);
       return res.status(404).json({ msg: "Fatal error!" });
     }

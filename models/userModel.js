@@ -36,14 +36,15 @@ const userSchema = mongoose.Schema({
   token: {
     type: String,
   },
-  count: {
-    type: Number,
-    default: 0
+  address: {
+    type: String,
+    require: true,
+    trim: true,
   },
-  // =================================
-  enabled: {
-    type: Boolean,
-    default: true
+  phone: {
+    type: Number,
+    require: true,
+    trim: true,
   },
   deletedAt: {
     type: Boolean,

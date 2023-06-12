@@ -11,10 +11,11 @@ const getSku = async (req, res) => {
   try {
     
     const { sku } = req.body;
-    if (!sku) {      
-      return res.status(404).json({ msg: "Must submit a sku!" });
-    }
+
     const query = await productSchema.findOne({ sku });
+
+    if (!query) return res.status(400).json({ msg: "There is not product with this sku!" });
+
     res.status(200).json({ res: query });
 
   } catch (e) {
@@ -34,17 +35,13 @@ const getStock = async (req, res) => {
 };
 
 const addProduct = async (req, res) => {
-  const { sku } = req.body;
-
-  const issetSku = await productSchema.findOne({ sku });
-  if (!sku) {
-    return res.status(400).json({ msg: `This sku is already registered!` });
-  }
-  if (issetSku) {   
-    return res.status(400).json({ msg: `This sku is already registered!` });
-  }
-
+ 
   try {
+    const { sku } = req.body;
+
+    const issetSku = await productSchema.findOne({ sku }); 
+
+    if (issetSku) return res.status(400).json({ msg: `This sku is already registered!` });
 
     const product = new productSchema(req.body);
     await product.save();
@@ -55,26 +52,22 @@ const addProduct = async (req, res) => {
     });
     
   } catch (err) {
-     res.json({ msg: "Invalid token!"});
+     res.json({ msg: "Fatal Error!"});
   }
 };
-const updateProduct = async (req, res) => {
-
-  const { _id  } = req.params;
-  const { sku  } = req.body;
+const updateProduct = async (req, res) => {  
 
   try {
 
+    const { _id  } = req.params;
+    const { sku  } = req.body;
+
     const issetId = await productSchema.findById(_id);
-    if (!issetId) {
-      return res.status(404).json({ msg: "No product found with that ID!" });
-    }
+    if (!issetId) return res.status(404).json({ msg: "No product found with that ID!" }); 
 
     const issetSku = await productSchema.findOne({ sku });
-    if (issetSku && issetSku.id != _id) {
-      return res.status(404).json({  msg: "This sku is associated with another product!" });
-    }
-
+    if (issetSku && issetSku.id != _id) return res.status(404).json({  msg: "This sku is associated with another product!" });
+    
     issetId.name = req.body.name || issetId.name;
     issetId.price = req.body.price || issetId.price;
     issetId.stock = req.body.stock || issetId.stock;
@@ -100,7 +93,7 @@ const updateProduct = async (req, res) => {
 const getProducts = getAll(productSchema);
 const countProducts = countAll(productSchema);
 const getProduct = getOne(productSchema);
-const deleteProduct = deleteOne(productSchema, "Users");
+const deleteProduct = deleteOne(productSchema);
 
 
 export {

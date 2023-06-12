@@ -1,5 +1,5 @@
 import express from "express";
-import Auth from "../middleware/Auth.js";
+import { verifyAdministratorEditor}  from "../middleware/Auth.js";
 
 import {
     addProduct,
@@ -14,7 +14,7 @@ import {
 
 const router = express.Router();
 
-router.post("/", Auth, addProduct);
+router.post("/", verifyAdministratorEditor, addProduct);
 router.post("/getProducts", getProducts);
 router.post("/getSku", getSku);
 router.get("/getStock", getStock);
@@ -22,8 +22,8 @@ router.post("/countProducts", countProducts);
 
 router
     .route("/:_id")
-    .get(Auth, getProduct)
-    .put(Auth, updateProduct)
-    .delete(Auth, deleteProduct);
+    .get(verifyAdministratorEditor, getProduct)
+    .put(verifyAdministratorEditor, updateProduct)
+    .delete(verifyAdministratorEditor, deleteProduct);
 
 export default router;

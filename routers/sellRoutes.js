@@ -1,20 +1,19 @@
 import express from "express";
-import Auth from "../middleware/Auth.js";
+import { verifyAdministratorEditor, verifyUser}  from "../middleware/Auth.js";
 
 import {
     getGainTotal,
     getSells,
-    addSell,
-    addSells
+    addSells,
    
 } from "../controllers/sellController.js";
 
 const router = express.Router();
 
-router.post("/", Auth, addSell);
-router.post("/addSells", Auth, addSells);
-router.get("/", Auth, getSells);
-router.get("/gainTotal", Auth, getGainTotal);
+router.post("/addSells", verifyUser, addSells);
+router.get("/", verifyAdministratorEditor, getSells);
+
+router.get("/gainTotal", verifyAdministratorEditor, getGainTotal);
 
 
 export default router;

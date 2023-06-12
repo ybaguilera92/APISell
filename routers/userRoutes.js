@@ -1,5 +1,5 @@
 import express from "express";
-import Auth from "../middleware/Auth.js";
+import { verifyAdministrator}  from "../middleware/Auth.js";
 
 import {
     signIn,
@@ -7,19 +7,21 @@ import {
     getUsers,
     getUser,
     deleteUser,
-    updateUser
+    updateUser,
+    registerUser
 } from "../controllers/userController.js";
 
 const router = express.Router();
 
 router.post("/", signIn);
-router.post("/addUser", Auth, addUser);
-router.get("/getUsers", Auth, getUsers);
+router.post("/register", registerUser);
+router.post("/addUser", verifyAdministrator, addUser);
+router.get("/getUsers", verifyAdministrator, getUsers);
 
 router
     .route("/:_id")
-    .get(Auth, getUser)
-    .put(Auth, updateUser)
-    .delete(Auth, deleteUser);
+    .get(verifyAdministrator, getUser)
+    .put(verifyAdministrator, updateUser)
+    .delete(verifyAdministrator, deleteUser);
 
 export default router;
