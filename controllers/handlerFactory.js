@@ -11,14 +11,15 @@ const deleteOne = (Model) =>
       if (!doc) return res.status(404).json({ msg: "No document found with that ID!" });
 
       doc.deletedAt = true;
-      doc.save();
-      res.json({
+      await doc.save();
+
+      res.status(200).json({
         res: doc,
         msg: "Register was delete successfull!"
       });
 
     } catch (e) {
-      return res.status(404).json({ msg: "Fatal error!" });
+      return res.status(500).json({ msg: "Fatal error!" });
     }
   });
 
@@ -32,13 +33,13 @@ const updateOne = (Model) =>
 
       if (!doc) return res.status(404).json({ msg: "No document found with that ID!" });
       
-      res.status(200).json({
+      res.status(201).json({
         res: doc,
         msg: "Register was update successfull!"
       });
 
     } catch (e) {
-      return res.status(404).json({ msg: "Fatal error with that ID!" });
+      return res.status(500).json({ msg: "Fatal error with that ID!" });
     }
   });
 
@@ -48,15 +49,13 @@ const createOne = (Model) =>
 
       const doc = await Model.create(req.body);
 
-      res.status(200).json({
+      res.status(201).json({
         res: doc,
         msg: "Register was create successfull!"
       });
 
-    } catch (e) {      
-
-      return res.status(404).json({ msg: "Fatal error!" });
-
+    } catch (e) {
+      return res.status(500).json({ msg: "Fatal error!" });
     }
   });
 
@@ -73,7 +72,7 @@ const getOne = (Model, popOptions) =>
       res.status(200).json({ res: doc });
 
     } catch (e) {
-      return res.status(404).json({ msg: "Fatal error with that ID!" });
+      return res.status(500).json({ msg: "Fatal error with that ID!" });
     }
   });
 
@@ -116,7 +115,7 @@ const countAll = (Model) =>
       res.status(200).json({ res: count });
 
     } catch (e) {
-      return res.status(404).json({ msg: "Fatal error!" });
+      return res.status(500).json({ msg: "Fatal error!" });
     }
   });
 export {

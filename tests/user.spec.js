@@ -20,7 +20,7 @@ describe("POST /USER CREATE", () => {
     test('Should create a new user', async () => {
 
         const response = await request(app).post('/API/USER/addUser').send(newUser).set('Authorization', `Bearer ${accessToken}`);
-        expect(response.statusCode).toBe(200);
+        expect(response.statusCode).toBe(201);
         expect(response.body).toHaveProperty('res');
         expect(response.body).toHaveProperty('msg', 'New user created!');
     });
@@ -56,7 +56,7 @@ describe("POST /USER REGISTER", () => {
     test('Should register a new user', async () => {
 
         const response = await request(app).post('/API/USER/register').send(newUser);
-        expect(response.statusCode).toBe(200);
+        expect(response.statusCode).toBe(201);
         expect(response.body).toHaveProperty('res');
         expect(response.body).toHaveProperty('msg', 'New user registered!');
     });
@@ -93,7 +93,7 @@ describe("POST /USERS/LOGIN", () => {
     test('Should return an error if username is not register ', async () => {
         login.username = "yoel";
         const response = await request(app).post("/API/USER/").send(login);
-        expect(response.statusCode).toBe(400);
+        expect(response.statusCode).toBe(404);
         expect(response.body).toHaveProperty('msg', 'Username is not register!');
     });  
     test('Should return an error if password is incorrect! ', async () => {
@@ -144,7 +144,7 @@ describe("GET /USER/UPDATE", () => {
     }
     test('Shuold response with a 200 status code ', async () => {
         const response = await request(app).put("/API/USER/64875bd043ae1f07af510b06").send(updateUser).set('Authorization', `Bearer ${accessToken}`);
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(201);
         expect(response.body).toHaveProperty("res");
     });
     test('should return an error if id is not exist', async () => {

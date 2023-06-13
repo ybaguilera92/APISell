@@ -10,10 +10,10 @@ const signIn = async (req, res) => {
 
   const user = await userSchema.findOne({ username });
 
-  if (!user) return res.status(400).json({ msg: `Username is not register!` });
+  if (!user) return res.status(404).json({ msg: `Username is not register!` });
     
   if (await user.checkoutPassword(password))
-    res.json({
+    res.status(200).json({
      res: {
        _id: user._id,
        name: user.name,
@@ -27,7 +27,7 @@ const signIn = async (req, res) => {
     else return res.status(400).json({ msg: "Password incorrect!" });
     
   } catch (error) {
-     return res.status(404).json({ msg: "Fatal error!" });
+     return res.status(500).json({ msg: "Fatal error!" });
   }
 };
 
@@ -47,12 +47,12 @@ const addUser = async (req, res) => {
     const user = new userSchema(req.body);
     
     await user.save();
-    res.json({
+    res.status(201).json({
       msg: `New user created!`,
       res: user
     });
   } catch (err) {
-     return res.status(404).json({ msg: "Fatal error!"});
+     return res.status(500).json({ msg: "Fatal error!"});
   }
 };
 const registerUser = async (req, res) => {
@@ -72,12 +72,13 @@ const registerUser = async (req, res) => {
     user.role = "Other";
 
     await user.save();
-    res.json({
+
+    res.status(201).json({
       msg: `New user registered!`,
       res: user
     });
   } catch (err) {
-    return res.status(404).json({ msg: "Fatal error!"});
+    return res.status(500).json({ msg: "Fatal error!"});
   }
 };
 const updateUser = async (req, res) => {
@@ -93,14 +94,13 @@ const updateUser = async (req, res) => {
     issetUser.email = req.body.email || issetUser.email;
     issetUser.password = req.body.password || issetUser.password;
     issetUser.role = req.body.role || issetUser.role;
-    issetUser.enabled = req.body.enabled;
 
     const userStored = await issetUser.save();
 
-    res.json({res:userStored});
+    res.status(201).json({res:userStored});
 
   } catch (err) {
-    return res.status(404).json({ msg: "Fatal error!" });
+    return res.status(500).json({ msg: "Fatal error!" });
   }
 }
 

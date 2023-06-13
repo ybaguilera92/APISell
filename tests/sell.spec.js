@@ -11,9 +11,9 @@ describe("GET /SELLS", () => {
         expect(response.body).toHaveProperty("res");
         expect(response.body).toBeInstanceOf(Object);
     });
-    test('Shuold response with a 200 status code ', async () => {
+    test('Shuold response with a 400 status code ', async () => {
         const response = await request(app).get("/API/SELL").send().set('Authorization', `Bearer ${tokenExpired}`);
-        expect(response.status).toBe(401);
+        expect(response.status).toBe(400);
         expect(response.body).toHaveProperty('msg', 'jwt expired');
     });
 });
@@ -41,7 +41,7 @@ describe("POST /SELL", () => {
     test('should create a new sell', async () => {
         const response = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
         console.log(response.error.message);
-        expect(response.statusCode).toBe(200);
+        expect(response.statusCode).toBe(201);
         expect(response.body).toHaveProperty('msg', 'Sells registered successfully!');
     });
 
@@ -63,11 +63,16 @@ describe("POST /SELL", () => {
         newSEll.products[0].product = "6485d0a7067279481b9d5647"
         newSEll.products[0].count = 2
         const res = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
-        expect(res.statusCode).toBe(404);
+        expect(res.statusCode).toBe(400);
     });
     test('should return an error if sotck to equal at 0', async () => {
         const res = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
-        expect(res.statusCode).toBe(404);
+        expect(res.statusCode).toBe(400);
+    });
+    test('should return an error if this category exist in more than product!', async () => {
+        newSEll.products[1].product = "6485d0b8067279481b9d564d"
+        const res = await request(app).post('/API/SELL/addSells').send(newSEll).set('Authorization', `Bearer ${accessToken}`);
+        expect(res.statusCode).toBe(400);
     });
 });
 
