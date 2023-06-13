@@ -14,12 +14,12 @@ const getSku = async (req, res) => {
 
     const query = await productSchema.findOne({ sku });
 
-    if (!query) return res.status(400).json({ msg: "There is not product with this sku!" });
+    if (!query) return res.status(404).json({ msg: "There is not product with this sku!" });
 
     res.status(200).json({ res: query });
 
   } catch (e) {
-    return res.status(404).json({ msg: "Fatal error with that SKU!" });
+    return res.status(500).json({ msg: "Fatal error with that SKU!" });
   }
 };
 
@@ -30,7 +30,7 @@ const getStock = async (req, res) => {
     res.status(200).json({ res: query });
 
   } catch (e) {
-    return res.status(404).json({ msg: "Fatal error!" });
+    return res.status(500).json({ msg: "Fatal error!" });
   }
 };
 
@@ -46,13 +46,13 @@ const addProduct = async (req, res) => {
     const product = new productSchema(req.body);
     await product.save();
 
-    res.json({
+    res.status(201).json({
       res: product,
       msg: "A new product create!"
     });
     
   } catch (err) {
-     res.json({ msg: "Fatal Error!"});
+    return res.status(500).json({ msg: "Fatal Error!"});
   }
 };
 const updateProduct = async (req, res) => {  
@@ -66,7 +66,7 @@ const updateProduct = async (req, res) => {
     if (!issetId) return res.status(404).json({ msg: "No product found with that ID!" }); 
 
     const issetSku = await productSchema.findOne({ sku });
-    if (issetSku && issetSku.id != _id) return res.status(404).json({  msg: "This sku is associated with another product!" });
+    if (issetSku && issetSku.id != _id) return res.status(400).json({  msg: "This sku is associated with another product!" });
     
     issetId.name = req.body.name || issetId.name;
     issetId.price = req.body.price || issetId.price;
@@ -80,13 +80,13 @@ const updateProduct = async (req, res) => {
     issetId.img = req.body.img || issetId.img;
 
     const userStored = await issetId.save();
-    res.json({
+    res.status(201).json({
       res: userStored,
       msg: "Updated product!!"
     });
 
   } catch (err) {
-    return res.status(404).json({ msg: "Fatal error!" });
+    return res.status(500).json({ msg: "Fatal error!" });
   }
 }
 

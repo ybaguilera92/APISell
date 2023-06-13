@@ -27,22 +27,14 @@ describe("GET /PRODUCTS/STOCK", () => {
          "img": "http://sdsadd.dsdadd"
      }
      test('should create a new product', async () => {
-
-         const response = await request(app)
-             .post('/API/PRODUCT/')
-             .send(newProduct).set('Authorization', `Bearer ${accessToken}`);
-
-         expect(response.statusCode).toBe(200);
+         const response = await request(app).post('/API/PRODUCT/').send(newProduct).set('Authorization', `Bearer ${accessToken}`);
+         expect(response.statusCode).toBe(201);
          expect(response.body).toHaveProperty('res');
          expect(response.body).toHaveProperty('msg', 'A new product create!');
      });
 
      test('should return an error if sku already exists', async () => {
-
-         const res = await request(app)
-             .post('/API/PRODUCT/')
-             .send(newProduct).set('Authorization', `Bearer ${accessToken}`);
-
+         const res = await request(app).post('/API/PRODUCT/').send(newProduct).set('Authorization', `Bearer ${accessToken}`);
          expect(res.statusCode).toBe(400);
          expect(res.body).toHaveProperty('msg', 'This sku is already registered!');
      });
@@ -58,7 +50,8 @@ describe("POST /PRODUCTS GET", () => {
      test('Shuold response with a 200 status code ', async () => {
          const response = await request(app).post("/API/PRODUCT/getProducts").send({
              "page": 1,
-             "category": "Nuevos"
+             "category": "Nuevos",
+             "limit": 10
          });
          expect(response.status).toBe(200);
          expect(response.body).toHaveProperty("res");
@@ -75,7 +68,7 @@ describe("POST /PRODUCTS/SKU", () => {
     });
     test('Should return an message if not send a sku ', async () => {
         const response = await request(app).post("/API/PRODUCT/getSku").send({ "sku": "250555" });
-        expect(response.status).toBe(400);
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('msg', 'There is not product with this sku!');
     });
 });
@@ -101,7 +94,6 @@ describe("POST /PRODUCTS/COUNT", () => {
 describe("GET /PRODUCT/GET", () => {
     test('Shuold response with a 200 status code ', async () => {
         const response = await request(app).get("/API/PRODUCT/6485d09c067279481b9d5643").send().set('Authorization', `Bearer ${accessToken}`);
-
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("res");
         expect(response.body).toBeInstanceOf(Object);
@@ -128,7 +120,7 @@ describe("GET /PRODUCT/UPDATE", () => {
     }
     test('Shuold response with a 200 status code ', async () => {
         const response = await request(app).put("/API/PRODUCT/648730b51176da6ba485d757").send(updateProduct).set('Authorization', `Bearer ${accessToken}`);
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(201);
         expect(response.body).toHaveProperty("res");
     });
     test('Should return an error if not product exists', async () => {
@@ -139,7 +131,7 @@ describe("GET /PRODUCT/UPDATE", () => {
     test('Should return an error if you try to change a sku to another that already exists and is associated with another user ', async () => {
         updateProduct.sku = '412561';
         const response = await request(app).put("/API/PRODUCT/648730b51176da6ba485d757").send(updateProduct).set('Authorization', `Bearer ${accessToken}`);
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(400);
         expect(response.body).toHaveProperty('msg', 'This sku is associated with another product!');
     });
 });

@@ -4,13 +4,15 @@ import userSchema from "../models/userModel.js";
 
 const getGainTotal = async (req, res) => {
   try {
+
     const query = await sellSchema.find();
     let total = 0;
     query.map(x => total = total + x.gain);
+
     res.status(200).json({ res: total });
 
   } catch (e) {
-    return res.status(404).json({ msg: "Fatal error!" });
+    return res.status(500).json({ msg: "Fatal error!" });
   }
 };
 
@@ -30,11 +32,11 @@ const addSells = async (req, res) => {
 
       if (!productItem) return res.status(404).json({ msg: `This product is not registered!` });
 
-      if (count > 1)  return res.status(404).json({ msg: `You cannot buy more than one ${productItem.name}!`});
+      if (count > 1)  return res.status(400).json({ msg: `You cannot buy more than one ${productItem.name}!`});
 
-      if (productItem.stock == 0) return res.status(404).json({ msg: `This ${productItem.name} not have stock!` });
+      if (productItem.stock == 0) return res.status(400).json({ msg: `This ${productItem.name} not have stock!` });
 
-      if (categorys.includes(productItem.category)) return res.status(404).json({ msg: `This category exist in more than product!` });
+      if (categorys.includes(productItem.category)) return res.status(400).json({ msg: `This category exist in more than product!` });
       else categorys.push(productItem.category);
     }
     let gainTotal = 0;
@@ -59,8 +61,8 @@ const addSells = async (req, res) => {
       user: user._id,
       gain: gainTotal
     });
-    sells.save();
-    return res.status(200).json({ msg: `Sells registered successfully!`});
+    await sells.save();
+    return res.status(201).json({ msg: `Sells registered successfully!`});
   } catch (err) {
     console.error(err.message);
     return res.status(500).json({ msg: "Fatal error!" });
@@ -81,7 +83,7 @@ const getSells = async (req, res) => {
     res.status(200).json({ res: query });
 
   } catch (e) {
-    return res.status(404).json({ msg: "Fatal error!"});
+    return res.status(500).json({ msg: "Fatal error!"});
   }
 };
 
